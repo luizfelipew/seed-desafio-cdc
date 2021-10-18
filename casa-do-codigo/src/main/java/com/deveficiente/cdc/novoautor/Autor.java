@@ -44,4 +44,12 @@ public class Autor {
         sb.append('}');
         return sb.toString();
     }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
 }

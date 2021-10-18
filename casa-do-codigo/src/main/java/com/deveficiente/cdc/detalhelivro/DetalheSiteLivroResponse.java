@@ -1,0 +1,63 @@
+package com.deveficiente.cdc.detalhelivro;
+
+import com.deveficiente.cdc.cadastrolivro.Livro;
+
+import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
+
+public class DetalheSiteLivroResponse {
+
+    private DetalheSiteAutorResponse autor;
+    private String titulo;
+    private String isbn;
+    private int numeroPaginas;
+    private BigDecimal preco;
+    private String resumo;
+    private String sumario;
+    private String dataPublicacao;
+
+
+    public DetalheSiteLivroResponse(Livro livro) {
+        titulo = livro.getTitulo();
+        autor = new DetalheSiteAutorResponse(livro.getAutor());
+        isbn = livro.getIsbn();
+        numeroPaginas = livro.getNumeroPaginas();
+        preco = livro.getPreco();
+        resumo = livro.getResumo();
+        sumario = livro.getSumario();
+        dataPublicacao = livro.getDataPublicacao()
+            .format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
+    public DetalheSiteAutorResponse getAutor() {
+        return autor;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public int getNumeroPaginas() {
+        return numeroPaginas;
+    }
+
+    public BigDecimal getPreco() {
+        return preco;
+    }
+
+    public String getResumo() {
+        return resumo;
+    }
+
+    public String getSumario() {
+        return sumario;
+    }
+
+    public String getDataPublicacao() {
+        return dataPublicacao;
+    }
+}
