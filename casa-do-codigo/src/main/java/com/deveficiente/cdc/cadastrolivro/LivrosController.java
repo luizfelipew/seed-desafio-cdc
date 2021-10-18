@@ -28,21 +28,4 @@ public class LivrosController {
         manager.persist(novoLivro);
         return novoLivro.toString();
     }
-
-    @GetMapping("/livros")
-    // 1
-    public List<LivroResponse> listar() {
-        final LivroResponse livroResponse = new LivroResponse();
-        final List<Livro> consulta = manager.createQuery("select l from Livro l", Livro.class).getResultList();
-        // 1
-        val listLivros = consulta.stream()
-            .map(livro -> {
-                livroResponse.setId(livro.getId());
-                livroResponse.setNome(livro.getTitulo());
-                return livroResponse;
-            })
-            .collect(Collectors.toList());
-
-        return listLivros;
-    }
 }
