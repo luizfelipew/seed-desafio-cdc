@@ -25,6 +25,7 @@ public class DetalheLivroSiteController {
         // o find pode retornar nulo, entao tenho que tratar
         // 1
         if (Objects.isNull(livroBuscado)){
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             return ResponseEntity.notFound().build();
         }
 
