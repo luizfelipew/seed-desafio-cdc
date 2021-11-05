@@ -21,6 +21,10 @@ public class Estado {
     @ManyToOne
     private @NotNull @Valid Pais pais;
 
+    @Deprecated
+    public Estado() {
+    }
+
     public Estado(@NotBlank String nome, @NotNull @Valid Pais pais) {
         this.nome = nome;
         this.pais = pais;
@@ -35,4 +39,9 @@ public class Estado {
         sb.append('}');
         return sb.toString();
     }
+
+    public boolean pertenceAPais(Pais pais) {
+        return this.pais.equals(pais);
+    }
+
 }
