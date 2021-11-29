@@ -7,6 +7,8 @@ import org.hibernate.validator.internal.constraintvalidators.hv.br.CNPJValidator
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
 import org.springframework.util.Assert;
 
+import javax.persistence.EntityManager;
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -37,11 +39,14 @@ public class NovaCompraRequest {
     private String telefone;
     @NotBlank
     private String cep;
+    @Valid
+    @NotNull
+    private NovoPedidoRequest pedido;
 
     public NovaCompraRequest(@Email @NotBlank String email, @NotBlank String nome,
                              @NotBlank String sobrenome, @NotBlank String documento, @NotBlank String endereco,
                              @NotBlank String complemento, @NotBlank String cidade, @NotNull Long idPais, Long idEstado,
-                             @NotBlank String telefone, @NotBlank String cep) {
+                             @NotBlank String telefone, @NotBlank String cep, @Valid @NotNull NovoPedidoRequest pedido) {
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -53,6 +58,11 @@ public class NovaCompraRequest {
         this.idEstado = idEstado;
         this.telefone = telefone;
         this.cep = cep;
+        this.pedido = pedido;
+    }
+
+    public NovoPedidoRequest getPedido() {
+        return pedido;
     }
 
     public String getDocumento() {
@@ -65,6 +75,15 @@ public class NovaCompraRequest {
 
     public Long getIdEstado() {
         return idEstado;
+    }
+
+    public Compra toModel(EntityManager manager) {
+        @NotNull Pais pais = manager.find(Pais.class, idPais);
+        final Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep);
+        if (idEstado != null) {
+            compra.setEstado(manager.find(Estado.class, idEstado));
+        }
+        return compra;
     }
 
     @Override
@@ -81,6 +100,7 @@ public class NovaCompraRequest {
         sb.append(", idEstado=").append(idEstado);
         sb.append(", telefone='").append(telefone).append('\'');
         sb.append(", cep='").append(cep).append('\'');
+        sb.append(", pedido=").append(pedido);
         sb.append('}');
         return sb.toString();
     }
@@ -97,4 +117,7 @@ public class NovaCompraRequest {
             || cnpjValidator.isValid(documento, null);
     }
 
+    public boolean temEstado() {
+        return idEstado != null;
+    }
 }
