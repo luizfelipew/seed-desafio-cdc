@@ -32,12 +32,11 @@ public class Estado {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Estado{");
-        sb.append("id=").append(id);
-        sb.append(", nome='").append(nome).append('\'');
-        sb.append(", pais=").append(pais);
-        sb.append('}');
-        return sb.toString();
+        return "Estado{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", pais=" + pais +
+                '}';
     }
 
     public boolean pertenceAPais(Pais pais) {

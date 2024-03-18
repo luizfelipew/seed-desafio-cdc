@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 @RestController
@@ -26,8 +27,10 @@ public class FechaCompraParte1Controller {
     }
 
     @PostMapping("/compras")
+    @Transactional
     public String cria(@RequestBody @Valid NovaCompraRequest request) {
         final Compra novaCompra = request.toModel(manager);
+        manager.persist(novaCompra);
         return novaCompra.toString();
     }
 }

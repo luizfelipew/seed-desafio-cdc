@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.function.Function;
 
 public class NovaCompraRequest {
 
@@ -79,30 +80,33 @@ public class NovaCompraRequest {
 
     public Compra toModel(EntityManager manager) {
         @NotNull Pais pais = manager.find(Pais.class, idPais);
-        final Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep);
+
+        Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
+
+        final Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep, funcaoCriacaoPedido);
         if (idEstado != null) {
             compra.setEstado(manager.find(Estado.class, idEstado));
         }
+
         return compra;
     }
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("NovaCompraRequest{");
-        sb.append("email='").append(email).append('\'');
-        sb.append(", nome='").append(nome).append('\'');
-        sb.append(", sobrenome='").append(sobrenome).append('\'');
-        sb.append(", documento='").append(documento).append('\'');
-        sb.append(", endereco='").append(endereco).append('\'');
-        sb.append(", complemento='").append(complemento).append('\'');
-        sb.append(", cidade='").append(cidade).append('\'');
-        sb.append(", idPais=").append(idPais);
-        sb.append(", idEstado=").append(idEstado);
-        sb.append(", telefone='").append(telefone).append('\'');
-        sb.append(", cep='").append(cep).append('\'');
-        sb.append(", pedido=").append(pedido);
-        sb.append('}');
-        return sb.toString();
+        return "NovaCompraRequest{" +
+                "email='" + email + '\'' +
+                ", nome='" + nome + '\'' +
+                ", sobrenome='" + sobrenome + '\'' +
+                ", documento='" + documento + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", cidade='" + cidade + '\'' +
+                ", idPais=" + idPais +
+                ", idEstado=" + idEstado +
+                ", telefone='" + telefone + '\'' +
+                ", cep='" + cep + '\'' +
+                ", pedido=" + pedido +
+                '}';
     }
 
     public boolean documentoValido() {

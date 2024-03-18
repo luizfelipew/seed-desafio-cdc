@@ -3,6 +3,7 @@ package com.deveficiente.cdc.fechamentocompra;
 import com.deveficiente.cdc.cadastrolivro.Livro;
 import com.deveficiente.cdc.compartilhado.ExistsId;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -30,5 +31,10 @@ public class NovoPedidoItensRequest {
         sb.append(", quantidade=").append(quantidade);
         sb.append('}');
         return sb.toString();
+    }
+
+    public ItemPedido toModel(EntityManager manager) {
+        @NotNull Livro livro = manager.find(Livro.class, idLivro);
+        return new ItemPedido(livro, quantidade);
     }
 }

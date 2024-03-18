@@ -4,14 +4,19 @@ import com.deveficiente.cdc.paisestado.Estado;
 import com.deveficiente.cdc.paisestado.Pais;
 import org.springframework.util.Assert;
 
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.function.Function;
 
+@Entity
 public class Compra {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String email;
     private String nome;
     private String sobrenome;
@@ -25,9 +30,13 @@ public class Compra {
     private String telefone;
     private String cep;
 
+    @OneToOne(mappedBy = "compra",cascade = CascadeType.PERSIST)
+    private Pedido pedido;
+
     public Compra(@Email @NotBlank String email, @NotBlank String nome, @NotBlank String sobrenome,
                   @NotBlank String documento, @NotBlank String endereco, @NotBlank String complemento,
-                  @NotNull Pais pais, @NotBlank String telefone, @NotBlank String cep) {
+                  @NotNull Pais pais, @NotBlank String telefone, @NotBlank String cep,
+                  Function<Compra, Pedido> funcaoCriacaoPedido) {
 
         this.email = email;
         this.nome = nome;
@@ -38,6 +47,12 @@ public class Compra {
         this.pais = pais;
         this.telefone = telefone;
         this.cep = cep;
+        this.pedido = funcaoCriacaoPedido.apply(this);
+    }
+
+    @Deprecated
+    public Compra() {
+
     }
 
     public void setEstado(@NotNull @Valid Estado estado) {
@@ -48,18 +63,19 @@ public class Compra {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Compra{");
-        sb.append("email='").append(email).append('\'');
-        sb.append(", nome='").append(nome).append('\'');
-        sb.append(", sobrenome='").append(sobrenome).append('\'');
-        sb.append(", documento='").append(documento).append('\'');
-        sb.append(", endereco='").append(endereco).append('\'');
-        sb.append(", complemento='").append(complemento).append('\'');
-        sb.append(", pais=").append(pais);
-        sb.append(", estado=").append(estado);
-        sb.append(", telefone='").append(telefone).append('\'');
-        sb.append(", cep='").append(cep).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "Compra{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", nome='" + nome + '\'' +
+                ", sobrenome='" + sobrenome + '\'' +
+                ", documento='" + documento + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", complemento='" + complemento + '\'' +
+                ", pais=" + pais +
+                ", estado=" + estado +
+                ", telefone='" + telefone + '\'' +
+                ", cep='" + cep + '\'' +
+                ", pedido=" + pedido +
+                '}';
     }
 }
