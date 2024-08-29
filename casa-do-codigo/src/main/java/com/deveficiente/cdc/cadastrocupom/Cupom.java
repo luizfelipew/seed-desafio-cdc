@@ -37,4 +37,26 @@ public class Cupom {
         this.percentualDesconto = percentualDesconto;
         this.validade = validade;
     }
+
+    public boolean valido() {
+        return LocalDate.now().compareTo(this.validade) <= 0;
+    }
+
+    public BigDecimal getPercentualDesconto() {
+        return percentualDesconto;
+    }
+
+    public LocalDate getValidade() {
+        return validade;
+    }
+
+    @Override
+    public String toString() {
+        return "Cupom{" +
+                "id=" + id +
+                ", codigo='" + codigo + '\'' +
+                ", percentualDesconto=" + percentualDesconto +
+                ", validade=" + validade +
+                '}';
+    }
 }

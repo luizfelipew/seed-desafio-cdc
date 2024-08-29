@@ -1,5 +1,6 @@
 package com.deveficiente.cdc.fechamentocompra;
 
+import com.deveficiente.cdc.cadastrocupom.Cupom;
 import com.deveficiente.cdc.paisestado.Estado;
 import com.deveficiente.cdc.paisestado.Pais;
 import org.springframework.util.Assert;
@@ -32,6 +33,9 @@ public class Compra {
 
     @OneToOne(mappedBy = "compra",cascade = CascadeType.PERSIST)
     private Pedido pedido;
+
+    @Embedded
+    private CupomAplicado cupomAplicado;
 
     public Compra(@Email @NotBlank String email, @NotBlank String nome, @NotBlank String sobrenome,
                   @NotBlank String documento, @NotBlank String endereco, @NotBlank String complemento,
@@ -77,5 +81,11 @@ public class Compra {
                 ", cep='" + cep + '\'' +
                 ", pedido=" + pedido +
                 '}';
+    }
+
+    public void aplicaCupom(Cupom cupom) {
+        Assert.isTrue(cupom.valido(), "Olha o cupom que está sendo aplicado não está mais valido");
+        Assert.isNull(cupomAplicado, "Olha você não pode trocar um cupom de uma compra");
+        this.cupomAplicado = new CupomAplicado(cupom);
     }
 }

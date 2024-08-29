@@ -1,11 +1,13 @@
 package com.deveficiente.cdc.fechamentocompra;
 
+import com.deveficiente.cdc.cadastrocupom.Cupom;
 import com.deveficiente.cdc.compartilhado.ExistsId;
 import com.deveficiente.cdc.paisestado.Estado;
 import com.deveficiente.cdc.paisestado.Pais;
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CNPJValidator;
 import org.hibernate.validator.internal.constraintvalidators.hv.br.CPFValidator;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
@@ -42,7 +44,10 @@ public class NovaCompraRequest {
     private String cep;
     @Valid
     @NotNull
+    // 1
     private NovoPedidoRequest pedido;
+
+    private String codigoCupom;
 
     public NovaCompraRequest(@Email @NotBlank String email, @NotBlank String nome,
                              @NotBlank String sobrenome, @NotBlank String documento, @NotBlank String endereco,
@@ -62,6 +67,10 @@ public class NovaCompraRequest {
         this.pedido = pedido;
     }
 
+    public void setCodigoCupom(String codigoCupom) {
+        this.codigoCupom = codigoCupom;
+    }
+
     public NovoPedidoRequest getPedido() {
         return pedido;
     }
@@ -78,15 +87,29 @@ public class NovaCompraRequest {
         return idEstado;
     }
 
-    public Compra toModel(EntityManager manager) {
-        @NotNull Pais pais = manager.find(Pais.class, idPais);
+    // 1
+    public Compra toModel(EntityManager manager, CupomRepository cupomRepository) {
+        @NotNull
+        // 1
+        Pais pais = manager.find(Pais.class, idPais);
 
+        // 1
         Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
 
-        final Compra compra = new Compra(email, nome, sobrenome, documento, endereco, complemento, pais, telefone, cep, funcaoCriacaoPedido);
+        // 1 função como argumento
+        final Compra compra = new Compra(email, nome, sobrenome, documento, endereco,
+                complemento, pais, telefone, cep, funcaoCriacaoPedido);
+        // 1
         if (idEstado != null) {
             compra.setEstado(manager.find(Estado.class, idEstado));
         }
+
+        // 1
+        if (StringUtils.hasText(codigoCupom)) {
+            Cupom cupom = cupomRepository.getByCodigo(codigoCupom);
+            compra.aplicaCupom(cupom);
+        }
+
 
         return compra;
     }
@@ -117,8 +140,9 @@ public class NovaCompraRequest {
         final CNPJValidator cnpjValidator = new CNPJValidator();
         cnpjValidator.initialize(null);
 
+        // 1
         return cpfValidator.isValid(documento, null)
-            || cnpjValidator.isValid(documento, null);
+                || cnpjValidator.isValid(documento, null);
     }
 
     public boolean temEstado() {

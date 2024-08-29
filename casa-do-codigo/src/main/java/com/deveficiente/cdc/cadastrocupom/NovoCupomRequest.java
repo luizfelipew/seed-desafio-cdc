@@ -13,7 +13,7 @@ import java.time.LocalDate;
 
 import static com.fasterxml.jackson.annotation.JsonFormat.*;
 
-public class NovoCuponRequest {
+public class NovoCupomRequest {
 
     @NotBlank
     @UniqueValue(domainClass = Cupom.class, fieldName = "codigo")
@@ -29,7 +29,7 @@ public class NovoCuponRequest {
     @JsonFormat(pattern = "dd/MM/yyyy", shape = Shape.STRING)
     private LocalDate validade;
 
-    public NovoCuponRequest(String codigo, BigDecimal percentualDesconto) {
+    public NovoCupomRequest(String codigo, BigDecimal percentualDesconto) {
         super();
         this.codigo = codigo;
         this.percentualDesconto = percentualDesconto;

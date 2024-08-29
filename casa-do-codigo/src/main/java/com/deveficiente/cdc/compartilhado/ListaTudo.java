@@ -1,5 +1,6 @@
 package com.deveficiente.cdc.compartilhado;
 
+import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,13 +18,16 @@ public class ListaTudo {
     @GetMapping("/lista-tudo")
     public HashMap<String, Object> list(){
 
-        final List autores = manager.createQuery("select a from Autor a").getResultList();
+        val autores = manager.createQuery("select a from Autor a").getResultList();
 
         HashMap<String, Object> resultado = new HashMap<>();
         resultado.put("autores", autores.toString());
 
-        List calegorias = manager.createQuery("select c from Categoria c").getResultList();
-        resultado.put("categorias", calegorias.toString());
+        val categorias = manager.createQuery("select c from Categoria c").getResultList();
+        resultado.put("categorias", categorias.toString());
+
+        val cupons = manager.createQuery("select c from Cupom c").getResultList();
+        resultado.put("cupons", cupons.toString());
 
         return resultado;
     }

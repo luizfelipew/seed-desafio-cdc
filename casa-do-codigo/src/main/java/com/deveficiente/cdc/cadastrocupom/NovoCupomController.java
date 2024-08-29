@@ -17,7 +17,7 @@ public class NovoCupomController {
 
     @PostMapping(value = "/cupons")
     @Transactional
-    public String cria(@RequestBody @Valid NovoCuponRequest request) {
+    public String cria(@RequestBody @Valid NovoCupomRequest request) {
         Cupom novoCupom = request.toModel();
         manager.persist(novoCupom);
 

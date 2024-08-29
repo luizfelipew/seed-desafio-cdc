@@ -1,5 +1,6 @@
 package com.deveficiente.cdc.fechamentocompra;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -12,11 +13,12 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+@RequiredArgsConstructor
 @RestController
 public class FechaCompraParte1Controller {
 
-    @Autowired
-    private EstadoPertenceAPaisValidator estadoPertenceAPaisValidator;
+    private final EstadoPertenceAPaisValidator estadoPertenceAPaisValidator;
+    private final CupomRepository cupomRepository;
 
     @PersistenceContext
     private EntityManager manager;
@@ -29,7 +31,7 @@ public class FechaCompraParte1Controller {
     @PostMapping("/compras")
     @Transactional
     public String cria(@RequestBody @Valid NovaCompraRequest request) {
-        final Compra novaCompra = request.toModel(manager);
+        final Compra novaCompra = request.toModel(manager, cupomRepository);
         manager.persist(novaCompra);
         return novaCompra.toString();
     }
