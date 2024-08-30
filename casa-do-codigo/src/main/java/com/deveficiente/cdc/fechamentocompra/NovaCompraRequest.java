@@ -14,6 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 import java.util.function.Function;
 
 public class NovaCompraRequest {
@@ -47,6 +48,7 @@ public class NovaCompraRequest {
     // 1
     private NovoPedidoRequest pedido;
 
+    @ExistsId(domainClass = Cupom.class, fieldName = "codigo")
     private String codigoCupom;
 
     public NovaCompraRequest(@Email @NotBlank String email, @NotBlank String nome,
@@ -147,5 +149,9 @@ public class NovaCompraRequest {
 
     public boolean temEstado() {
         return idEstado != null;
+    }
+
+    public Optional<String> getCodigoCupom() {
+        return Optional.ofNullable(codigoCupom);
     }
 }
