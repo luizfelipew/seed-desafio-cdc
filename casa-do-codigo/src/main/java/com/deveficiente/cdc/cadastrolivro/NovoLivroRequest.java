@@ -73,7 +73,4 @@ public class NovoLivroRequest {
             isbn, dataPublicacao, autor, categoria);
     }
 
-//    public void setDataPublicacao(LocalDate dataPublicacao) {
-//        this.dataPublicacao = dataPublicacao;
-//    }
 }
