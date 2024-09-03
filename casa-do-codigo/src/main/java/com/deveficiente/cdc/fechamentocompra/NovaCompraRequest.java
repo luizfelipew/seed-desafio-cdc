@@ -1,6 +1,7 @@
 package com.deveficiente.cdc.fechamentocompra;
 
 import com.deveficiente.cdc.cadastrocupom.Cupom;
+import com.deveficiente.cdc.compartilhado.Documento;
 import com.deveficiente.cdc.compartilhado.ExistsId;
 import com.deveficiente.cdc.paisestado.Estado;
 import com.deveficiente.cdc.paisestado.Pais;
@@ -27,6 +28,7 @@ public class NovaCompraRequest {
     @NotBlank
     private String sobrenome;
     @NotBlank
+    @Documento
     private String documento;
     @NotBlank
     private String endereco;
@@ -45,16 +47,18 @@ public class NovaCompraRequest {
     private String cep;
     @Valid
     @NotNull
-    // 1
+    //1
     private NovoPedidoRequest pedido;
-
-    @ExistsId(domainClass = Cupom.class, fieldName = "codigo")
+    @ExistsId(domainClass = Cupom.class,fieldName = "codigo")
     private String codigoCupom;
 
-    public NovaCompraRequest(@Email @NotBlank String email, @NotBlank String nome,
-                             @NotBlank String sobrenome, @NotBlank String documento, @NotBlank String endereco,
-                             @NotBlank String complemento, @NotBlank String cidade, @NotNull Long idPais, Long idEstado,
-                             @NotBlank String telefone, @NotBlank String cep, @Valid @NotNull NovoPedidoRequest pedido) {
+    public NovaCompraRequest(@Email @NotBlank String email,
+                             @NotBlank String nome, @NotBlank String sobrenome,
+                             @NotBlank String documento, @NotBlank String endereco,
+                             @NotBlank String complemento, @NotBlank String cidade,
+                             @NotNull Long idPais, @NotBlank String telefone,
+                             @NotBlank String cep, @Valid @NotNull NovoPedidoRequest pedido) {
+        super();
         this.email = email;
         this.nome = nome;
         this.sobrenome = sobrenome;
@@ -63,10 +67,13 @@ public class NovaCompraRequest {
         this.complemento = complemento;
         this.cidade = cidade;
         this.idPais = idPais;
-        this.idEstado = idEstado;
         this.telefone = telefone;
         this.cep = cep;
         this.pedido = pedido;
+    }
+
+    public void setIdEstado(Long idEstado) {
+        this.idEstado = idEstado;
     }
 
     public void setCodigoCupom(String codigoCupom) {
@@ -81,6 +88,30 @@ public class NovaCompraRequest {
         return documento;
     }
 
+    @Override
+    public String toString() {
+        return "NovaCompraRequest [email=" + email + ", nome=" + nome
+                + ", sobrenome=" + sobrenome + ", documento=" + documento
+                + ", endereco=" + endereco + ", complemento=" + complemento
+                + ", cidade=" + cidade + ", idPais=" + idPais + ", idEstado="
+                + idEstado + ", telefone=" + telefone + ", cep=" + cep
+                + ", pedido=" + pedido + "]";
+    }
+
+    public boolean documentoValido() {
+        Assert.hasLength(documento,
+                "você nao deveria validar o documento se ele não tiver sido preenchido");
+
+        CPFValidator cpfValidator = new CPFValidator();
+        cpfValidator.initialize(null);
+
+        CNPJValidator cnpjValidator = new CNPJValidator();
+        cnpjValidator.initialize(null);
+
+        return cpfValidator.isValid(documento, null)
+                || cnpjValidator.isValid(documento, null);
+    }
+
     public Long getIdPais() {
         return idPais;
     }
@@ -89,66 +120,35 @@ public class NovaCompraRequest {
         return idEstado;
     }
 
-    // 1
-    public Compra toModel(EntityManager manager, CupomRepository cupomRepository) {
+    //1
+    public Compra toModel(EntityManager manager,CupomRepository cupomRepository) {
         @NotNull
-        // 1
+        //1
         Pais pais = manager.find(Pais.class, idPais);
 
-        // 1
+        //1
+        //1
         Function<Compra, Pedido> funcaoCriacaoPedido = pedido.toModel(manager);
 
-        // 1 função como argumento
-        final Compra compra = new Compra(email, nome, sobrenome, documento, endereco,
-                complemento, pais, telefone, cep, funcaoCriacaoPedido);
-        // 1
+        //1 funcao como argumento
+        Compra compra = new Compra(email, nome, sobrenome, documento, endereco,
+                complemento, pais, telefone, cep,funcaoCriacaoPedido);
+        //1
         if (idEstado != null) {
             compra.setEstado(manager.find(Estado.class, idEstado));
         }
 
-        // 1
-        if (StringUtils.hasText(codigoCupom)) {
+        //1
+        if(StringUtils.hasText(codigoCupom)) {
             Cupom cupom = cupomRepository.getByCodigo(codigoCupom);
             compra.aplicaCupom(cupom);
         }
 
-
         return compra;
     }
 
-    @Override
-    public String toString() {
-        return "NovaCompraRequest{" +
-                "email='" + email + '\'' +
-                ", nome='" + nome + '\'' +
-                ", sobrenome='" + sobrenome + '\'' +
-                ", documento='" + documento + '\'' +
-                ", endereco='" + endereco + '\'' +
-                ", complemento='" + complemento + '\'' +
-                ", cidade='" + cidade + '\'' +
-                ", idPais=" + idPais +
-                ", idEstado=" + idEstado +
-                ", telefone='" + telefone + '\'' +
-                ", cep='" + cep + '\'' +
-                ", pedido=" + pedido +
-                '}';
-    }
-
-    public boolean documentoValido() {
-        Assert.hasLength(documento, "voce nao deveria validar o documento se ele nao tiver sido preenchido");
-
-        final CPFValidator cpfValidator = new CPFValidator();
-        cpfValidator.initialize(null);
-        final CNPJValidator cnpjValidator = new CNPJValidator();
-        cnpjValidator.initialize(null);
-
-        // 1
-        return cpfValidator.isValid(documento, null)
-                || cnpjValidator.isValid(documento, null);
-    }
-
     public boolean temEstado() {
-        return idEstado != null;
+        return Optional.ofNullable(idEstado).isPresent();
     }
 
     public Optional<String> getCodigoCupom() {

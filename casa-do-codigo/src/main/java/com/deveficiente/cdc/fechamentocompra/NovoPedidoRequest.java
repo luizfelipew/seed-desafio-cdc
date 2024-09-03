@@ -21,14 +21,14 @@ public class NovoPedidoRequest {
     private BigDecimal total;
     @Size(min = 1)
     @Valid
-    private List<NovoPedidoItensRequest> itens = new ArrayList<>();
+    private List<NovoPedidoItemRequest> itens = new ArrayList<>();
 
-    public NovoPedidoRequest(@Positive @NotNull BigDecimal total, @Size @Valid List<NovoPedidoItensRequest> itens) {
+    public NovoPedidoRequest(@Positive @NotNull BigDecimal total, @Size @Valid List<NovoPedidoItemRequest> itens) {
         this.total = total;
         this.itens = itens;
     }
 
-    public List<NovoPedidoItensRequest> getItens() {
+    public List<NovoPedidoItemRequest> getItens() {
         return itens;
     }
 

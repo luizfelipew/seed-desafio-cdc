@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-public class NovoPedidoItensRequest {
+public class NovoPedidoItemRequest {
 
     @NotNull
     @ExistsId(domainClass = Livro.class, fieldName = "id")
@@ -15,7 +15,7 @@ public class NovoPedidoItensRequest {
     @Positive
     private int quantidade;
 
-    public NovoPedidoItensRequest(@NotNull Long idLivro, @Positive int quantidade) {
+    public NovoPedidoItemRequest(@NotNull Long idLivro, @Positive int quantidade) {
         this.idLivro = idLivro;
         this.quantidade = quantidade;
     }
