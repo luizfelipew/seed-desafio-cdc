@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
-public class CupomValidadoValidator implements Validator {
+public class CupomValidoValidator implements Validator {
 
 
     private final CupomRepository cupomRepository;
