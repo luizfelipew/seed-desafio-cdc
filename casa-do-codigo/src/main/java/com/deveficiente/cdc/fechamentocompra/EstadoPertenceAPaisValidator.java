@@ -15,6 +15,10 @@ public class EstadoPertenceAPaisValidator implements Validator {
     @PersistenceContext
     private EntityManager manager;
 
+    public EstadoPertenceAPaisValidator(EntityManager manager) {
+        this.manager = manager;
+    }
+
     @Override
     public boolean supports(Class<?> clazz) {
         return NovaCompraRequest.class.isAssignableFrom(clazz);
